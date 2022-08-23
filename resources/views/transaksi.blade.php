@@ -370,6 +370,7 @@
             $('#tabel_detail').hide();
             tabel_transaksi();
             datePicker();
+            customers();
         });
 
         function datePicker() {
@@ -564,21 +565,31 @@
             });
         }
 
-        function customer() {
-            $('[name=kode_customer]').empty('');
+        function customers() {
+            $('#form_tambah').find('[name=kode_customer]').empty('');
+            $('#form_edit').find('[name=kode_customer]').empty('');
             $.ajax({
                 url: 'http://127.0.0.1:8000/api/admin/transaksi/kode_customer',
                 type: 'GET',
 
                 success: function(data) {
-                    $('[name=kode_customer]').append(
+                    $('#form_tambah').find('[name=kode_customer]').append(
 
                         '<option value="" >' + '<-- Silahkan Pilih Customer -->' + '</option>'
                     );
+                    $('#form_edit').find('[name=kode_customer]').append(
+
+                        '<option value="" >' + '<-- Silahkan Pilih Customer -->' + '</option>'
+                    );
+
                     $.each(data, function(key, value) {
                         id_customer = data[key].id;
                         kode_customer = data[key].kode_customer;
-                        $('[name=kode_customer]').append(
+                        $('#form_tambah').find('[name=kode_customer]').append(
+
+                            '<option value=' + id_customer + '>' + kode_customer + '</option>'
+                        );
+                        $('#form_edit').find('[name=kode_customer]').append(
 
                             '<option value=' + id_customer + '>' + kode_customer + '</option>'
                         );
@@ -753,7 +764,7 @@
             $('#tabel_transaksi').DataTable().destroy();
             $('#tabel_detail').DataTable().destroy();
             transaksi_no();
-            customer();
+            customers();
             barang();
         }
 
@@ -1078,7 +1089,6 @@
         }
 
         function edit_transaksi(id) {
-            customer();
             barang();
             $.ajax({
                 url: 'http://127.0.0.1:8000/api/admin/transaksi/' + id + '/edit_transaksi',
@@ -1088,6 +1098,8 @@
                     $('#form_edit').show();
                     $('#tambah_transaksi').hide();
                     $('#tabel_transaksi').hide();
+                    $('#form_edit').find('[name=nama_barang]').val('');
+                    $('#form_edit').find('[name=harga]').val('');
                     $('#form_edit').find('#button').empty('');
                     $('#form_edit').find('#button').append(`
             <button type="button" class="btn btn-primary" onclick="tambah_barang()">Tambah
@@ -1107,6 +1119,7 @@
                         diskon = data[key].diskon;
                         ongkir = data[key].ongkir;
                         total_bayar = data[key].total_bayar;
+
 
                         $('#form_edit').find('[name=no_transaksi]').val(no_transaksi);
                         $('#form_edit').find('[name=tgl]').val(tgl);
@@ -1431,7 +1444,6 @@
                         total_bayar: total_bayar,
                     },
                     success: function(data) {
-
                         toastr.success("Data Berhasil DI Tambahkan...!!!", "Sucesss", {
                             positionClass: "toast-bottom-right",
                             timeOut: 5e3,
